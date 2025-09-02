@@ -1,0 +1,47 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Clients</h3>
+  <div>
+    <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('clients.export_clients') }}"><i class="bi bi-download"></i> Export CSV</a>
+    <a class="btn btn-primary" href="{{ url_for('clients.new_client') }}"><i class="bi bi-plus"></i> New Client</a>
+  </div>
+</div>
+
+<form class="row g-2 mb-3">
+  <div class="col-md-9">
+    <input type="text" name="q" class="form-control" placeholder="Search name/email/phone" value="{{ q }}">
+  </div>
+  <div class="col-md-3">
+    <button class="btn btn-outline-primary w-100">Search</button>
+  </div>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-striped table-hover align-middle">
+    <thead><tr>
+      <th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th></th>
+    </tr></thead>
+    <tbody>
+      {% for c in clients %}
+      <tr>
+        <td>{{ c.id }}</td>
+        <td>{{ c.name }}</td>
+        <td>{{ c.email or '-' }}</td>
+        <td>{{ c.phone or '-' }}</td>
+        <td>{{ c.address or '-' }}</td>
+        <td class="text-end">
+          <a href="{{ url_for('clients.edit_client', cid=c.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+          <form method="POST" action="{{ url_for('clients.delete_client', cid=c.id) }}" class="d-inline" onsubmit="return confirm('Delete client?')">
+            <button class="btn btn-sm btn-outline-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="text-center text-muted">No clients found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

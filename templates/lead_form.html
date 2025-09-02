@@ -1,0 +1,68 @@
+
+{% extends "base.html" %}
+{% block content %}
+<h3 class="mb-3">{{ 'Edit Lead' if lead else 'New Lead' }}</h3>
+<form method="POST" class="card p-3 shadow-sm">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <label class="form-label">Name</label>
+      <input type="text" name="name" class="form-control" value="{{ lead.name if lead else '' }}" required>
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Email</label>
+      <input type="email" name="email" class="form-control" value="{{ lead.email if lead else '' }}">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Phone</label>
+      <input type="text" name="phone" class="form-control" value="{{ lead.phone if lead else '' }}">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Source</label>
+      <input type="text" name="source" class="form-control" value="{{ lead.source if lead else '' }}" placeholder="Website, Ads, Referral">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Status</label>
+      <select name="status" class="form-select">
+        {% for s in ['new','contacted','negotiation','closed','lost'] %}
+          <option value="{{ s }}" {% if lead and lead.status==s %}selected{% endif %}>{{ s|capitalize }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Assign To</label>
+      <select name="assigned_to" class="form-select">
+        <option value="">-- None --</option>
+        {% for u in users %}
+          <option value="{{ u.id }}" {% if lead and lead.assigned_to==u.id %}selected{% endif %}>{{ u.username }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Property</label>
+      <select name="property_id" class="form-select">
+        <option value="">-- None --</option>
+        {% for p in properties %}
+          <option value="{{ p.id }}" {% if lead and lead.property_id==p.id %}selected{% endif %}>{{ p.title }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Client</label>
+      <select name="client_id" class="form-select">
+        <option value="">-- None --</option>
+        {% for c in clients %}
+          <option value="{{ c.id }}" {% if lead and lead.client_id==c.id %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-12">
+      <label class="form-label">Notes</label>
+      <textarea name="notes" class="form-control" rows="4">{{ lead.notes if lead else '' }}</textarea>
+    </div>
+    <div class="col-12 text-end">
+      <a class="btn btn-outline-secondary" href="{{ url_for('leads.list_leads') }}">Cancel</a>
+      <button class="btn btn-primary" type="submit">Save</button>
+    </div>
+  </div>
+</form>
+{% endblock %}

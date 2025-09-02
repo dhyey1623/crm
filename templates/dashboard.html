@@ -1,0 +1,91 @@
+
+{% extends "base.html" %}
+{% block content %}
+<h3 class="mb-4">Dashboard</h3>
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card shadow-sm stat-card"><div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="text-muted text-uppercase small">Leads</span>
+        <i class="bi bi-people display-6"></i>
+      </div>
+      <div class="display-6">{{ counts.leads }}</div>
+    </div></div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm stat-card"><div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="text-muted text-uppercase small">Properties</span>
+        <i class="bi bi-house display-6"></i>
+      </div>
+      <div class="display-6">{{ counts.properties }}</div>
+    </div></div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm stat-card"><div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="text-muted text-uppercase small">Clients</span>
+        <i class="bi bi-person-vcard display-6"></i>
+      </div>
+      <div class="display-6">{{ counts.clients }}</div>
+    </div></div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm stat-card"><div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <span class="text-muted text-uppercase small">Agents</span>
+        <i class="bi bi-people-fill display-6"></i>
+      </div>
+      <div class="display-6">{{ counts.agents }}</div>
+    </div></div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm"><div class="card-body">
+      <h5 class="card-title">Leads by Status</h5>
+      <canvas id="chartStatus"></canvas>
+    </div></div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card shadow-sm"><div class="card-body">
+      <h5 class="card-title">Leads by Agent</h5>
+      <canvas id="chartAgent"></canvas>
+    </div></div>
+  </div>
+</div>
+
+<div class="card shadow-sm mt-4">
+  <div class="card-body">
+    <h5 class="card-title mb-3">Recent Leads</h5>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Assigned</th></tr></thead>
+        <tbody>
+          {% for l in recent_leads %}
+          <tr>
+            <td>{{ l.id }}</td><td>{{ l.name }}</td><td>{{ l.email or '-' }}</td><td>{{ l.phone or '-' }}</td>
+            <td><span class="badge bg-secondary">{{ l.status }}</span></td>
+            <td>{{ l.assignee.username if l.assignee else '-' }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-center text-muted">No leads yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("{{ url_for('reports.leads_by_status') }}")
+    .then(r => r.json())
+    .then(d => new Chart(document.getElementById('chartStatus'), { type: 'doughnut', data: { labels: d.labels, datasets: [{ data: d.values }]} }));
+  fetch("{{ url_for('reports.leads_by_agent') }}")
+    .then(r => r.json())
+    .then(d => new Chart(document.getElementById('chartAgent'), { type: 'bar', data: { labels: d.labels, datasets: [{ data: d.values }]}, options: { scales: { y: { beginAtZero: true }}} }));
+});
+</script>
+{% endblock %}

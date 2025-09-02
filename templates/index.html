@@ -1,0 +1,29 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="text-center py-5">
+  <h1 class="display-6 fw-bold">Welcome to Infinite Technology CRM</h1>
+  <p class="lead text-muted">Smart, fast, and simple CRM for real estate teams.</p>
+  <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">Get Started</a>
+  <div class="row mt-5 g-3">
+    <div class="col-md-4">
+      <div class="card shadow-sm"><div class="card-body">
+        <h5 class="card-title"><i class="bi bi-people"></i> Leads</h5>
+        <p class="display-6">{{ counts.leads }}</p>
+      </div></div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm"><div class="card-body">
+        <h5 class="card-title"><i class="bi bi-house"></i> Properties</h5>
+        <p class="display-6">{{ counts.properties }}</p>
+      </div></div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm"><div class="card-body">
+        <h5 class="card-title"><i class="bi bi-person-vcard"></i> Clients</h5>
+        <p class="display-6">{{ counts.clients }}</p>
+      </div></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

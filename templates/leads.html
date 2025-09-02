@@ -1,0 +1,59 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Leads</h3>
+  <div>
+    <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('leads.export_leads') }}"><i class="bi bi-download"></i> Export CSV</a>
+    <a class="btn btn-primary" href="{{ url_for('leads.new_lead') }}"><i class="bi bi-plus"></i> New Lead</a>
+  </div>
+</div>
+
+<form class="row g-2 mb-3">
+  <div class="col-md-6">
+    <input type="text" name="q" class="form-control" placeholder="Search name/email/phone" value="{{ q }}">
+  </div>
+  <div class="col-md-3">
+    <select name="status" class="form-select">
+      <option value="">All Status</option>
+      {% for s in ['new','contacted','negotiation','closed','lost'] %}
+        <option value="{{ s }}" {% if status==s %}selected{% endif %}>{{ s|capitalize }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <button class="btn btn-outline-primary w-100">Filter</button>
+  </div>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-striped table-hover align-middle">
+    <thead><tr>
+      <th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Source</th><th>Status</th><th>Assigned</th><th>Property</th><th>Client</th><th></th>
+    </tr></thead>
+    <tbody>
+      {% for l in leads %}
+      <tr>
+        <td>{{ l.id }}</td>
+        <td>{{ l.name }}</td>
+        <td>{{ l.email or '-' }}</td>
+        <td>{{ l.phone or '-' }}</td>
+        <td>{{ l.source or '-' }}</td>
+        <td><span class="badge bg-secondary">{{ l.status }}</span></td>
+        <td>{{ l.assignee.username if l.assignee else '-' }}</td>
+        <td>{{ l.property.title if l.property else '-' }}</td>
+        <td>{{ l.client.name if l.client else '-' }}</td>
+        <td class="text-end">
+          <a href="{{ url_for('leads.edit_lead', lead_id=l.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+          <form method="POST" action="{{ url_for('leads.delete_lead', lead_id=l.id) }}" class="d-inline" onsubmit="return confirm('Delete lead?')">
+            <button class="btn btn-sm btn-outline-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="10" class="text-center text-muted">No leads found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
